@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "addLabels": ["dependencies"],
+  "automergeType": "branch",
+  "platformAutomerge": true,
+  "prConcurrentLimit": 5,
+  "minimumReleaseAge": "3 days",
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "automerge": false
+  },
+  "osvVulnerabilityAlerts": true,
+  "packageRules": [
+    {
+      "description": "Automerge non-major and digest updates after the release-age soak",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
+      "automerge": true
+    },
+    {
+      "description": "GitHub Actions updates: group and soak, but review manually",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": false,
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "Major updates require manual review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "major-update"]
+    },
+    {
+      "description": "The wrapped Provenant image tag is pinned per action release, not by Renovate; bump it deliberately when cutting a new action version so consumers get a known image.",
+      "matchManagers": ["dockerfile"],
+      "matchPackageNames": ["ghcr.io/getprovenant/provenant"],
+      "enabled": false
+    }
+  ]
+}

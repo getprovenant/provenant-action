@@ -1,6 +1,7 @@
 # Local scan output produced while testing the action.
 *.json
 !testdata/**/*.json
+!renovate.json
 provenant-results.*
 
 # Editor / OS cruft.
