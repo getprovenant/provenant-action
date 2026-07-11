@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 name: Provenant Scan
 description: >-
-  Run the Provenant license, copyright, and SBOM scanner (a Rust,
-  ScanCode-compatible engine) against your repository and produce a scan
-  report.
+  Run the Provenant license, copyright, and SBOM scanner in CI, with
+  license-policy gating and SARIF output.
 author: Provenant contributors
 branding:
   icon: shield
