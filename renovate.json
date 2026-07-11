@@ -19,19 +19,12 @@
   "osvVulnerabilityAlerts": true,
   "packageRules": [
     {
-      "description": "Automerge non-major and digest updates after the release-age soak",
+      "description": "Hands-off: branch-automerge every non-major update (all managers, incl. GitHub Actions) once CI passes and the release-age soak elapses",
       "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
       "automerge": true
     },
     {
-      "description": "GitHub Actions updates: group and soak, but review manually",
-      "matchManagers": ["github-actions"],
-      "groupName": "GitHub Actions",
-      "automerge": false,
-      "minimumReleaseAge": "7 days"
-    },
-    {
-      "description": "Major updates require manual review",
+      "description": "Major updates are the only ones that open a PR for manual review",
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "labels": ["dependencies", "major-update"]
