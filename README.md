@@ -132,17 +132,18 @@ reading the report streamed to the workflow log when `output-file` is `-`.
 
 ## Versioning
 
-The action is a Docker container action. The wrapped Provenant version is baked
-into the action's [`Dockerfile`](Dockerfile) per release, so the version you run
-is determined by the git ref you pin:
+The action always runs the **latest** published Provenant release: its
+[`Dockerfile`](Dockerfile) is `FROM ghcr.io/getprovenant/provenant:latest`, rebuilt on each run.
+So the wrapped scanner advances automatically with every Provenant release — there is no per-release
+update to this action.
 
-- A **major version tag** (such as `@v1`) tracks the latest release within that
-  major series — the best default for most workflows.
-- A **full commit SHA** is an exact, immutable pin.
+You pin the **action's own** behavior by git ref:
 
-Because GitHub Actions does not allow expressions in a container action's image
-reference, the wrapped Provenant version cannot be selected at call time via an
-input; it is selected by the action release you pin to.
+- A **major version tag** (such as `@v1`) — the best default; picks up action fixes within that major.
+- A **full commit SHA** — an exact, immutable pin of the action.
+
+Because the action tracks `:latest`, `@vN` does not pin a fixed scanner version. If you need a
+reproducible scanner version, pin the container directly instead (`docker run ghcr.io/getprovenant/provenant:<version> scan …`).
 
 ## How it works
 

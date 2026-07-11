@@ -31,7 +31,12 @@ contain the scanner, only a thin Docker container action that runs the published
 
 ## Versioning and releases
 
-- The wrapped Provenant version is selected by the `FROM` tag in the `Dockerfile`, **not** by a
-  call-time input (GitHub Actions forbids expressions in a container action's image reference).
-- Cutting an action release: bump the `Dockerfile` `FROM` tag to a concrete, working Provenant
-  version, tag `vX.Y.Z`, and move the floating `vX` tag. Consumers pin `@vN` or a full SHA.
+- The `Dockerfile` is `FROM ghcr.io/getprovenant/provenant:latest`, so the action **auto-tracks the
+  newest Provenant release** — GitHub rebuilds the image on each run and pulls `:latest`. There is
+  **no per-Provenant-release commit or re-release of this action**; publish it once and it follows
+  Provenant forward.
+- Cut an action release only for changes to the **action itself** (inputs, entrypoint, docs): tag
+  `vX.Y.Z` and move the floating `vX` tag. Consumers pin `@vN` or a full SHA.
+- Trade-off: `@vN` is not pinned to a fixed scanner version. If reproducible version pinning is ever
+  needed without per-release commits, convert to a composite action running
+  `docker run …:${{ inputs.version }}` (default `latest`).
