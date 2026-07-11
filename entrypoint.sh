@@ -8,12 +8,14 @@
 #   $2 = output-format (bare name, e.g. json-pp)
 #   $3 = output-file ("-" for stdout, or a path)
 #   $4 = extra args (raw flags, word-split intentionally)
+#   $5 = paths-file (optional; a --paths-file list, empty to skip)
 set -eu
 
 paths="${1:-.}"
 fmt="${2:-json-pp}"
 outfile="${3:--}"
 extra="${4:-}"
+pathsfile="${5:-}"
 
 case "$fmt" in
   json | json-pp | json-lines | yaml | cyclonedx | cyclonedx-xml | spdx-tv | spdx-rdf | debian | html)
@@ -29,7 +31,14 @@ esac
 # deliberately left unquoted so multiple space-separated tokens split into
 # separate arguments; an empty value expands to nothing.
 # shellcheck disable=SC2086
-set -- scan $paths "$fmt_flag" "$outfile" $extra
+set -- scan $paths
+# `--paths-file` restricts the scan to a rooted list (e.g. changed files in CI).
+# It requires exactly one scan root, so keep `paths` a single root when using it.
+if [ -n "$pathsfile" ]; then
+  set -- "$@" --paths-file "$pathsfile"
+fi
+# shellcheck disable=SC2086
+set -- "$@" "$fmt_flag" "$outfile" $extra
 
 echo "provenant-action: running: provenant $*" >&2
 exec /usr/local/bin/provenant "$@"

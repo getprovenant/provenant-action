@@ -41,6 +41,42 @@ Write a report file and scan specific paths with a custom detection set:
           path: provenant-results.json
 ```
 
+### Scan only changed files (pull requests)
+
+For fast pull-request checks, scan just the files that changed instead of the
+whole tree. Produce a changed-file list with `git diff` and pass it as
+`paths-file`:
+
+```yaml
+name: Changed-file license scan
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: List changed files
+        run: git diff --name-only --diff-filter=d "origin/${{ github.base_ref }}...HEAD" > changed.txt
+      - uses: getprovenant/provenant-action@v1
+        with:
+          paths-file: changed.txt
+          args: --license --package --copyright
+```
+
+### Other scan options
+
+Any `provenant scan` flag can be passed through `args` — for example
+`--ignore "node_modules/*"` to skip noise, `--incremental` with a cached
+`--cache-dir` to reuse work across runs, or `--license-policy policy.yml` for
+policy-aware review. See the [CLI Guide](https://github.com/getprovenant/provenant/blob/main/docs/CLI_GUIDE.md)
+for the full set of workflows and flags.
+
 ## Inputs
 
 | Input           | Default             | Description                                                                                                                                                                              |
@@ -49,11 +85,12 @@ Write a report file and scan specific paths with a custom detection set:
 | `output-format` | `json-pp`           | Output format. One of `json-pp`, `json`, `json-lines`, `yaml`, `cyclonedx`, `cyclonedx-xml`, `spdx-tv`, `spdx-rdf`, `debian`, `html`. Maps to the matching `provenant scan --<format>` flag. |
 | `output-file`   | `-`                 | Where to write the report. `-` streams to stdout (the workflow log); any other value is a path written inside the workspace.                                                              |
 | `args`          | `--license --package` | Extra raw arguments appended verbatim to `provenant scan`. Detections are opt-in — this is where you enable them (`--license`, `--package`, `--copyright`, `--info`, `--email`, `--url`, …). |
+| `paths-file`    | _(empty)_           | Optional file listing exact files/directories to scan (one per line), relative to a single scan root in `paths`. Ideal for pull-request CI via `git diff --name-only`. When set, `paths` must stay a single root (the default `.`).                 |
 
 Under the hood the action runs:
 
 ```sh
-provenant scan <paths> --<output-format> <output-file> <args>
+provenant scan <paths> [--paths-file <paths-file>] --<output-format> <output-file> <args>
 ```
 
 ## Outputs

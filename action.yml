@@ -39,6 +39,15 @@ inputs:
       scan collects file inventory only.
     required: false
     default: "--license --package"
+  paths-file:
+    description: >-
+      Optional path to a file listing the exact files/directories to scan, one
+      per line, relative to the single scan root in `paths` (which must stay a
+      single root, the default "."). Ideal for pull-request CI: feed it the
+      output of `git diff --name-only` to scan only changed files. Leave empty
+      to scan `paths` directly.
+    required: false
+    default: ""
 
 # The upstream image (gcr.io/distroless/static-debian12) ships no shell and its
 # ENTRYPOINT is the provenant binary itself, so optional/variadic inputs cannot
@@ -56,3 +65,4 @@ runs:
     - ${{ inputs.output-format }}
     - ${{ inputs.output-file }}
     - ${{ inputs.args }}
+    - ${{ inputs.paths-file }}
