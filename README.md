@@ -6,12 +6,6 @@ workflow. This action wraps the published container image
 [`ghcr.io/getprovenant/provenant`](https://github.com/getprovenant/provenant/pkgs/container/provenant)
 so a scan needs no local toolchain.
 
-> [!IMPORTANT]
-> This action requires the Provenant container image. It becomes functional
-> from the next Provenant release onward: the current `:latest` image is a
-> known-broken build, and a musl-static rebuild is merged but not yet tagged.
-> Until that release is published, scans will fail to start.
-
 ## Usage
 
 Minimal workflow — scan the checked-out repository and stream a pretty-printed
