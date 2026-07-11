@@ -101,16 +101,17 @@ reading the report streamed to the workflow log when `output-file` is `-`.
 
 ## Versioning
 
-The action is a Docker container action. The wrapped Provenant version is pinned
-by the image tag baked into the action's [`Dockerfile`](Dockerfile), and the
-action itself is pinned by the git ref you reference:
+The action is a Docker container action. The wrapped Provenant version is baked
+into the action's [`Dockerfile`](Dockerfile) per release, so the version you run
+is determined by the git ref you pin:
 
-- `getprovenant/provenant-action@v1` — latest `v1.x` (recommended).
-- `getprovenant/provenant-action@<full-sha>` — an exact, immutable pin.
+- A **major version tag** (such as `@v1`) tracks the latest release within that
+  major series — the best default for most workflows.
+- A **full commit SHA** is an exact, immutable pin.
 
 Because GitHub Actions does not allow expressions in a container action's image
-reference, the wrapped version cannot be selected at call time via an input; it
-is selected by the action release you pin to.
+reference, the wrapped Provenant version cannot be selected at call time via an
+input; it is selected by the action release you pin to.
 
 ## How it works
 
