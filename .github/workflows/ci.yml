@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: Provenant contributors
+# SPDX-License-Identifier: Apache-2.0
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-test:
+    name: Self-test against a fixture
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      # Runs this repository's action against the committed fixture and writes a
+      # report file. This BUILDS the wrapper image, which FROMs
+      # ghcr.io/getprovenant/provenant:latest.
+      #
+      # NOTE: the currently published :latest image is a broken glibc build; the
+      # provenant binary will fail to exec until the next release republishes a
+      # musl-static image. `continue-on-error` keeps that expected failure from
+      # blocking the repo. Remove it once a working image is published.
+      - name: Run Provenant scan
+        id: scan
+        continue-on-error: true
+        uses: ./
+        with:
+          paths: testdata/sample
+          output-format: json-pp
+          output-file: provenant-results.json
+          args: --license --package --copyright
+
+      - name: Assert the scan produced output
+        if: always()
+        run: |
+          if [ "${{ steps.scan.outcome }}" != "success" ]; then
+            echo "::warning::The scan step did not succeed. This is expected until the" \
+              "next Provenant release republishes a working container image."
+            exit 0
+          fi
+          if [ ! -s provenant-results.json ]; then
+            echo "::error::Scan reported success but produced no output file."
+            exit 1
+          fi
+          echo "Scan produced $(wc -c < provenant-results.json) bytes of output:"
+          head -c 2000 provenant-results.json

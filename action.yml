@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: Provenant contributors
+# SPDX-License-Identifier: Apache-2.0
+name: Provenant Scan
+description: >-
+  Run the Provenant license, copyright, and SBOM scanner (a Rust,
+  ScanCode-compatible engine) against your repository and produce a scan
+  report.
+author: Provenant contributors
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  paths:
+    description: >-
+      Space-separated files or directories to scan, relative to the repository
+      root. Defaults to the whole checkout.
+    required: false
+    default: "."
+  output-format:
+    description: >-
+      Output format flag to use. One of: json-pp, json, json-lines, yaml,
+      cyclonedx, cyclonedx-xml, spdx-tv, spdx-rdf. Maps to the matching
+      `provenant scan --<format>` flag.
+    required: false
+    default: "json-pp"
+  output-file:
+    description: >-
+      Where to write the scan report. Use "-" (the default) to stream to the
+      workflow log on stdout, or a path such as "provenant-results.json" to
+      write a file in the workspace.
+    required: false
+    default: "-"
+  args:
+    description: >-
+      Extra raw arguments appended verbatim to `provenant scan`. This is where
+      you opt into detections and tuning, e.g. "--license --package
+      --copyright". Detections are opt-in, so with the default empty value the
+      scan collects file inventory only.
+    required: false
+    default: "--license --package"
+
+# The upstream image (gcr.io/distroless/static-debian12) ships no shell and its
+# ENTRYPOINT is the provenant binary itself, so optional/variadic inputs cannot
+# be mapped through pure `runs.args`. This action therefore builds a thin
+# wrapper image that FROMs the published GHCR image and adds a static busybox
+# shell purely so entrypoint.sh can assemble argv robustly (word-splitting
+# `paths`/`args`, honoring `output-file`). The wrapped provenant version is
+# pinned by the `FROM` tag in the Dockerfile; pin the action itself with a git
+# ref (e.g. @v1) to control which version you run.
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.paths }}
+    - ${{ inputs.output-format }}
+    - ${{ inputs.output-file }}
+    - ${{ inputs.args }}

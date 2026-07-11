@@ -1,0 +1,8 @@
+# Local scan output produced while testing the action.
+*.json
+!testdata/**/*.json
+provenant-results.*
+
+# Editor / OS cruft.
+.DS_Store
+*.swp
