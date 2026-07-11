@@ -48,6 +48,27 @@ inputs:
       to scan `paths` directly.
     required: false
     default: ""
+  license-policy:
+    description: >-
+      Optional path to a YAML license-policy file (see the Provenant CLI guide for
+      the format). Enables policy evaluation; required by `fail-on` and by SARIF
+      output.
+    required: false
+    default: ""
+  fail-on:
+    description: >-
+      Fail the job (exit code 3) when a scanned file matches a policy whose
+      compliance_alert is at or above this level: "error" or "warning". Requires
+      `license-policy`. Leave empty to report without gating.
+    required: false
+    default: ""
+  sarif-file:
+    description: >-
+      Optional path to also write SARIF 2.1.0 of policy violations, for uploading
+      with github/codeql-action/upload-sarif so findings appear as pull-request and
+      code-scanning alerts. Meaningful only with `license-policy`.
+    required: false
+    default: ""
 
 # The upstream image (gcr.io/distroless/static-debian12) ships no shell and its
 # ENTRYPOINT is the provenant binary itself, so optional/variadic inputs cannot
@@ -66,3 +87,6 @@ runs:
     - ${{ inputs.output-file }}
     - ${{ inputs.args }}
     - ${{ inputs.paths-file }}
+    - ${{ inputs.license-policy }}
+    - ${{ inputs.fail-on }}
+    - ${{ inputs.sarif-file }}
