@@ -35,11 +35,3 @@ contain the scanner, only a thin Docker container action that runs the published
   call-time input (GitHub Actions forbids expressions in a container action's image reference).
 - Cutting an action release: bump the `Dockerfile` `FROM` tag to a concrete, working Provenant
   version, tag `vX.Y.Z`, and move the floating `vX` tag. Consumers pin `@vN` or a full SHA.
-
-## Current caveat
-
-The published `ghcr.io/getprovenant/provenant:latest` is a known-broken glibc build; a musl-static
-rebuild is merged upstream but not yet released. Until that release ships, the CI self-test's scan
-step is expected to fail and is guarded with `continue-on-error`. **Once a working image is
-published, pin the `Dockerfile` `FROM` to that version and remove `continue-on-error` from
-`.github/workflows/ci.yml`** so the self-test actually gates.
