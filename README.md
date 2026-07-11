@@ -28,7 +28,7 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: getprovenant/provenant-action@v1
 ```
 
@@ -41,7 +41,7 @@ Write a report file and scan specific paths with a custom detection set:
           output-format: json
           output-file: provenant-results.json
           args: --license --package --copyright --info
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: provenant-results
           path: provenant-results.json
