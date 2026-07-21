@@ -6,6 +6,8 @@ workflow. This action wraps the published container image
 [`ghcr.io/getprovenant/provenant`](https://github.com/getprovenant/provenant/pkgs/container/provenant)
 so a scan needs no local toolchain.
 
+More about Provenant: the [project website](https://getprovenant.github.io) has a feature overview and an annotated [ScanCode comparison](https://getprovenant.github.io/compare/).
+
 ## Usage
 
 Minimal workflow — scan the checked-out repository and stream a pretty-printed
